@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const CartModel = require('./models/CartModel');
 const CategoryModel = require('./models/CategoryModel');
+const OrderedProductsModel = require('./models/OrderedProductsModel');
 const OrderModel = require('./models/OrderModel');
 const ParamsModel = require('./models/ParamsModel');
 const ProductModel = require('./models/ProductModel');
@@ -24,6 +25,7 @@ async function main() {
         db.params = await ParamsModel(Sequelize, sequelize)
         db.cart = await CartModel(Sequelize, sequelize)
         db.orders = await OrderModel(Sequelize, sequelize)
+        db.orderedProducts = await OrderedProductsModel(Sequelize, sequelize)
 
 
         // References
@@ -87,6 +89,41 @@ async function main() {
         db.users.hasMany(db.orders, {
             foreign_key: {
                 name: "user_id",
+                allowNull: false
+            }
+        })
+
+        db.orders.belongsTo(db.users, {
+            foreign_key: {
+                name: "user_id",
+                allowNull: false
+            }
+        })
+
+        db.orders.hasMany(db.orderedProducts, {
+            foreign_key: {
+                name: "order_id",
+                allowNull: false
+            }
+        })
+
+        db.orderedProducts.belongsTo(db.orders, {
+            foreign_key: {
+                name: "order_id",
+                allowNull: false
+            }
+        })
+
+        db.products.hasMany(db.orderedProducts, {
+            foreign_key: {
+                name: "product_id",
+                allowNull: false
+            }
+        })
+
+        db.orderedProducts.belongsTo(db.products, {
+            foreign_key: {
+                name: "product_id",
                 allowNull: false
             }
         })
