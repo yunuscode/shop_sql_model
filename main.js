@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const CartModel = require('./models/CartModel');
 const CategoryModel = require('./models/CategoryModel');
 const ParamsModel = require('./models/ParamsModel');
 const ProductModel = require('./models/ProductModel');
@@ -20,6 +21,7 @@ async function main() {
         db.categories = await CategoryModel(Sequelize, sequelize)
         db.products = await ProductModel(Sequelize, sequelize)
         db.params = await ParamsModel(Sequelize, sequelize)
+        db.cart = await CartModel(Sequelize, sequelize)
 
 
         // References
@@ -52,7 +54,35 @@ async function main() {
             }
         })
 
-        
+        db.users.hasMany(db.cart, {
+            foreign_key: {
+                name: "user_id",
+                allowNull: false
+            }
+        })
+
+        db.cart.belongsTo(db.users, {
+            foreign_key: {
+                name: "user_id",
+                allowNull: false
+            }
+        })
+
+        db.products.hasMany(db.cart, {
+            foreign_key: {
+                name: "product_id",
+                allowNull: false
+            }
+        })
+
+        db.cart.belongsTo(db.products, {
+            foreign_key: {
+                name: "product_id",
+                allowNull: false
+            }
+        })
+
+
 
         sequelize.sync({ force: true })
         
